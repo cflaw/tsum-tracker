@@ -4,7 +4,9 @@ Tsum Tsum Tracker
 Disclaimer
 --------------
 Gdip.ahk and xml.ahk are both found from AutoHotkey Forums
+
 https://autohotkey.com/board/topic/29449-gdi-standard-library-145-by-tic/
+
 https://autohotkey.com/board/topic/89197-xml-build-parse-xml/
 
 !!important

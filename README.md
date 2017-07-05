@@ -1,5 +1,3 @@
-# tsum-tracker
-
 Tsum Tsum Tracker
 ==============
 

@@ -14,6 +14,10 @@ https://autohotkey.com/board/topic/89197-xml-build-parse-xml/
 - script is written for Nox player, resolution: 405 x 720 
 - script must be ran in AHK **ANSI 32-bit**
 
+version 0.2
+--------------
+import into git
+
 version 0.1
 --------------
 - Manual checking of mail box for hearts using windows+v, and on first load of script

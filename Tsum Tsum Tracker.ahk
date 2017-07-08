@@ -15,9 +15,10 @@ SetWorkingDir %A_ScriptDir%
 #Include *i Gdip.ahk
 #Include xml.ahk
 
-n_Width := 0
-n_Height := 0
-ControlGetPos, n_X, n_Y, n_Width, n_Height, subWin1, Nox ahk_class Qt5QWindowIcon
+noxw := 0
+noxh := 0
+newX := 0
+newY := 0
 
 ;---------- MAIN LOGIC ------
 GoSub, IndivClaim
@@ -26,9 +27,28 @@ ExitApp ;TsumTsum
 
 ;------------- LABEL(S) ----------
 
+getName(newX, newY) {
+	
+	newX1 := newX + 70
+	newY1 := newY + 25
+	newX2 := 210+newX
+	newY2 := 41+newY
+	
+	TempFile := A_Temp . "\temp_capture.txt"
+	FileDelete, %TempFile%
+	RunWait, ocr\Capture2Text_CLI.exe -s "%newX1% %newY1% %newX2% %newY2%" -o %TempFile%,,Hide
+	FileRead, CaptureText, %TempFile%
+	FileDelete, %TempFile%
+	
+	modText := StrSplit(CaptureText, "(C")
+	modText := RegexReplace( modText[1], "\.+", "" )
+	
+	return % modText
+}
+
 CheckImage(file,which,byRef getX := -1 ,byRef getY := -1) {
-    global n_Width
-    global n_Height
+    global noxw
+    global noxh
 	
 	WinActivate, Nox ahk_class Qt5QWindowIcon
 
@@ -49,7 +69,9 @@ CheckImage(file,which,byRef getX := -1 ,byRef getY := -1) {
 }
 
 CreateRec(xPos, yPos) {
-
+	Global newX
+	Global newY
+	
 	try
 		x := new xml("<users/>") 
 
@@ -75,13 +97,11 @@ CreateRec(xPos, yPos) {
 	G2 := Gdip_GraphicsFromImage(pBitmap), Gdip_SetSmoothingMode(G2, 10), Gdip_SetInterpolationMode(G2, 10)
 	Gdip_DrawImage(G2, pBitmap, 0, 0, w, h,"","","","", "-1|0|0|0|0|0|-1|0|0|0|0|0|-1|0|0|0|0|0|1|0|1|1|1|0|1")
 	Gdip_DeleteGraphics(G2)
-	;newX := c_X + xPos - 225
-	;newY := c_Y + yPos - 6
 	
 	newX := c_X + xPos - 243
 	newY := c_Y + yPos - 26
 	
-	pBitmap_part:=Gdip_CloneBitmapArea(pBitmap, newX, newY, 180,61) ;get active window - x,y, width, height
+	pBitmap_part:=Gdip_CloneBitmapArea(pBitmap, newX, newY, 210,61) ;get active window - x,y, width, height
 	
 	Gdip_SaveBitmapToFile(pBitmap_part, file2)
 
@@ -108,6 +128,12 @@ IndivClaim:
 Return ; IndivClaim
 
 InsertXML(id) {
+	Global newX
+	Global newY
+	
+	name := getName(newX,newY)
+	
+	; get current user to check against records in XML
 	File = logger\%id%.png
 	FileGetSize, len  , %File% 
 	FileRead , bin , %File% 
@@ -153,7 +179,7 @@ InsertXML(id) {
 				;MsgBox %a%
 			}
 
-			x.addElement("user", "//users", {id: a}, {count: c}, data)
+			x.addElement("user", "//users", {id: a}, {name: name}, {count: c}, data)
 			;MsgBox not found
 		}
 		x.writeXML("logger/tracker.xml")

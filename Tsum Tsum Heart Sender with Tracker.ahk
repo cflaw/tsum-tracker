@@ -569,19 +569,31 @@ StartIndivClaim:
 		else {
 			Sleep, 250
 			GoSub, IndivClaim ; start working on first item in mail box
-			Sleep, 500
+			Sleep, 1200
 			ControlClick, x310 y250, Nox ahk_class Qt5QWindowIcon ; Click check button.	
-			Sleep, 350
-			ControlClick, x270 y440, Nox ahk_class Qt5QWindowIcon 	; click ok
+			Sleep, 1000
 			
+			okay:
 			Loop {
-				PixelSearch, Px1, Py1, 350, 420, 360, 430, 0x20C3E8, 3, Fast ;Search for received page
-				if (ErrorLevel = 1) {
-					ControlClick, x270 y440, Nox ahk_class Qt5QWindowIcon 	; click away
+				PixelSearch, Px1, Py1, 305, 430, 320, 450, 0x0AABF0, 5, Fast ;Search for receive gift page
+				if (ErrorLevel = 0) {
+					ControlClick, x270 y440, Nox ahk_class Qt5QWindowIcon 	; click ok
+					Sleep, 1000
+					break okay
 				}
-				else {
-					Break
+				else 
+				msgbox no find ok
+			}
+			
+			receive:
+			Loop {
+				PixelSearch, Px1, Py1, 170, 413, 243, 443, 0x4D6FF7, 5, Fast ;Search for received page
+				if (ErrorLevel = 0) {
+					ControlClick, x120 y120, Nox ahk_class Qt5QWindowIcon 	; click away
+					Sleep, 200
+					break receive
 				}
+
 			}
 		}
 	}

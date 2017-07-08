@@ -218,81 +218,28 @@ ClaimAll:
 	Else
 		ControlClick, x336 y178, Nox ahk_class Qt5QWindowIcon ; Click mail button.
  }
-
- Loop
- {
-	Sleep, 500
-	WinActivate, Nox ahk_class Qt5QWindowIcon ; Select Emulator
 	
 	; Search for Claim All button
 	;PixelSearch, Px1, Py1, 350, 565, 360, 575, 0x08ADF1, 3, Fast
 	;if ErrorLevel = 0
 	;	ControlClick, x%Px1% y%Py1%, Nox ahk_class Qt5QWindowIcon
 	
-
-	GoSub, StartIndivClaim ; start the individual claim
+	Loop {
 	
-	; Play Again button Error Code: -1
-	PixelSearch, Px1, Py1, 310, 435, 320, 445, 0x283B67, 3, Fast
-	if ErrorLevel = 0
-		ControlClick, x%Px1% y%Py1%, Nox ahk_class Qt5QWindowIcon
+		Sleep, 500
+		WinActivate, Nox ahk_class Qt5QWindowIcon ; Select Emulator
+		GoSub, StartIndivClaim ; start the individual claim
+		Sleep, 1000
+		GoSub, ClaimSub
 
-	; OK button in Receive Gift popup
-	PixelSearch, Px1, Py1, 310, 435, 320, 445, 0x0AB0F2, 3, Fast
-	if ErrorLevel = 0
-		ControlClick, x%Px1% y%Py1%, Nox ahk_class Qt5QWindowIcon
-
-	; Received - Close Button Search 5YY Range
-	PixelSearch, Px1, Py1, 195, 550, 205, 560, 0x0AADF0, 3, Fast
-	if ErrorLevel = 0
-	{
-		ControlClick, x%Px1% y%Py1%, Nox ahk_class Qt5QWindowIcon
-		Loop
-		{
-			WinActivate, Nox ahk_class Qt5QWindowIcon ; Select Emulator
-			PixelSearch, Px1, Py1, 45, 555, 55, 565, 0x9540DE, 3, Fast ;Search for pink heart bottom left of Mail Box.
-			if ErrorLevel = 0
-			{
-				Mail_Claimed++
-				Break
-			}
-
-			; Disconnected
-			PixelSearch, Px1, Py1, 195, 605, 205, 615, 0x09AAEF, 3, Fast
-			if ErrorLevel = 0
-			{
-				GoSub CheckConnection
-				FormatTime, Time,, hh:mm:ss tt
-				ControlSend,, %Time% - Claiming All {Enter}^{s}, Tsum Tsum.txt - Notepad
-				message := Time . " - Claiming All"
-				GoSub, SendMessage
-				Break
-			}
-		}
-		
 		ControlClick, x336 y178, Nox ahk_class Qt5QWindowIcon ; Click mail button.
-		Sleep, 300
+		Sleep, 1000
 		PixelSearch, Px1, Py1, 105, 275, 115, 280, 0x9540DE, 3, Fast ;Search for first pink heart in the Mail Box.
-		
+		if (ErrorLevel = 1) {
+			Break
+		}
+	}
 
-		; no hearts in first item of the inbox
-		if Mail_Claimed > 0
-			if (ErrorLevel = 1) {
-				Break
-			}
-	}
-				
-	; No messages notice in Mail Box
-	PixelSearch, Px1, Py1, 195, 255, 205, 265, 0xE7CC70, 3, Fast
-	if ErrorLevel = 0
-	{
-		FormatTime, Time,, hh:mm:ss tt
-		ControlSend,, %Time% - Nothing To Claim{Enter}, Tsum Tsum.txt - Notepad
-		message := Time . " - Nothing To Claim"
-		;GoSub, SendMessage
-		Break
-	}
- }
 
 Loop
 {
@@ -316,6 +263,66 @@ Loop
 }
 	
 Return ;ClaimAll 
+
+ClaimSub:
+
+	; Play Again button Error Code: -1
+	PixelSearch, Px1, Py1, 310, 435, 320, 445, 0x283B67, 3, Fast
+	if ErrorLevel = 0
+		ControlClick, x%Px1% y%Py1%, Nox ahk_class Qt5QWindowIcon
+
+	; OK button in Receive Gift popup
+	PixelSearch, Px1, Py1, 310, 435, 320, 445, 0x0AB0F2, 3, Fast
+	if ErrorLevel = 0
+		ControlClick, x%Px1% y%Py1%, Nox ahk_class Qt5QWindowIcon
+		
+	; Received - Close Button Search
+	PixelSearch, Px1, Py1, 180, 625, 210, 635, 0x0AADF0, 3, Fast
+	if ErrorLevel = 0
+	{
+		ControlClick, x%Px1% y%Py1%, Nox ahk_class Qt5QWindowIcon
+
+		Loop
+		{
+			WinActivate, Nox ahk_class Qt5QWindowIcon ; Select Emulator
+			PixelSearch, Px1, Py1, 45, 555, 55, 565, 0x9540DE, 3, Fast ;Search for pink heart bottom left of Mail Box.
+			if ErrorLevel = 0
+			{
+				Mail_Claimed++
+				Break
+			}
+
+			; Disconnected
+			PixelSearch, Px1, Py1, 195, 605, 205, 615, 0x09AAEF, 3, Fast
+			if ErrorLevel = 0
+			{
+				GoSub CheckConnection
+				FormatTime, Time,, hh:mm:ss tt
+				ControlSend,, %Time% - Claiming All {Enter}^{s}, Tsum Tsum.txt - Notepad
+				message := Time . " - Claiming All"
+				GoSub, SendMessage
+				Break
+			}
+
+			if Mail_Claimed > 0
+			{
+				Break
+			}
+		}
+	}
+				
+		; No messages notice in Mail Box
+		PixelSearch, Px1, Py1, 195, 255, 205, 265, 0xE7CC70, 3, Fast
+		if ErrorLevel = 0
+		{
+			FormatTime, Time,, hh:mm:ss tt
+			ControlSend,, %Time% - Nothing To Claim{Enter}, Tsum Tsum.txt - Notepad
+			message := Time . " - Nothing To Claim"
+			;GoSub, SendMessage
+			
+		}
+
+Return ;ClaimSub
 
 Reset2Me:
 	ResetL = 0
@@ -563,10 +570,11 @@ StartIndivClaim:
 		PixelSearch, Px1, Py1, 105, 275, 115, 280, 0x9540DE, 3, Fast ;Search for first pink heart in the Mail Box.
 			
 		if (ErrorLevel = 1) {
-			;msgbox no first heart
-			Break
+
+			Break StartIndivClaim
 		}
 		else {
+
 			Sleep, 250
 			GoSub, IndivClaim ; start working on first item in mail box
 			Sleep, 1200

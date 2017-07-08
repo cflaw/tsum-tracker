@@ -6,9 +6,8 @@
 OnMessage(0x115, "OnScroll") ; WM_VSCROLL
 OnMessage(0x114, "OnScroll") ; WM_HSCROLL
 
-
 Gui Main: New,, TT Heart Tracker
-Gui Main: Add, Text,x20 y20 , TT Heart Tracker
+;Gui Main: Add, Text,x10 y20 , TT Heart Tracker
 ;Gui Main: Add, Button, gStartButton x20 y20 w105 h30, &Start
 ;Gui Main: Add, Button, gPauseButton x150 y20 w105 h30, &Pause
 ;Gui Main: Add, Button, gStopButton x280 y20 w105 h30, &Stop
@@ -16,32 +15,37 @@ Gui Main: Add, Text,x20 y20 , TT Heart Tracker
 i := 1
 newY = 5
 
-	try
-		x := new xml() 
+try
+	x := new xml() 
 
-	catch pe ; catch parsing error(if any)
-		MsgBox, 16, PARSE ERROR
-		, % "Exception thrown!!`n`nWhat: " pe.What "`nFile: " pe.File
-		. "`nLine: " pe.Line "`nMessage: " pe.Message "`nExtra: " pe.Extra
-		
+catch pe ; catch parsing error(if any)
+	MsgBox, 16, PARSE ERROR
+	, % "Exception thrown!!`n`nWhat: " pe.What "`nFile: " pe.File
+	. "`nLine: " pe.Line "`nMessage: " pe.Message "`nExtra: " pe.Extra
 	
-	x.load("logger/tracker.xml")
+x.load("logger/tracker.xml")
 
-	
+Gui, Add, Text, x10 y45 , S/N
+Gui, Add, Text, x50 y45 , Image
+Gui, Add, Text, x270 y45 , Name
+Gui, Add, Text, x440 y45 , Count
+
 Loop, logger\*.png {
 	newY := newY+70
 	editY := newY + 20
 	name := RegexReplace( x.getChild("//users", "element", i).getAttribute("name") , "\.+", "" )
-
-	Gui, Add, Picture, x20 y%newY% vT%i%, logger\%i%.png
-	Gui, Add, Edit, r1 x240 w160  h40 -VScroll y%editY% vName%i%, %name%
-
+	count := x.getChild("//users", "element", i).getAttribute("count")
+	
+	Gui, Add, Text, x10 y%editY% , %i%
+	Gui, Add, Picture, x50 y%newY% vT%i%, logger\%i%.png
+	Gui, Add, Edit, r1 x270 w160  h40 -VScroll y%editY% vName%i%, %name%
+	Gui, Add, Text, x440 y%editY% , %count%
 	
 	i++
 }
 
 Gui, +Resize +0x300000 ; WS_VSCROLL | WS_HSCROLL
-Gui, Show, W700 H650
+Gui, Show, W520 H650
 
 Gui, +LastFound
 GroupAdd, MyGui, % "ahk_id " . WinExist()
@@ -63,10 +67,13 @@ return
 StopButton:
 return
 
+^q:: ; press control+r to reload
+  Reload
+  return
+  
 GuiSize:
     UpdateScrollBars(A_Gui, A_GuiWidth, A_GuiHeight)
 return
-
 
 #IfWinActive ahk_group MyGui
 WheelUp::

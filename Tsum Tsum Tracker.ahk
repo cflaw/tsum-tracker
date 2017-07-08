@@ -127,6 +127,11 @@ IndivClaim:
 	
 Return ; IndivClaim
 
+StartIndivClaim:
+
+Return ; StartIndivClaim
+
+
 InsertXML(id) {
 	Global newX
 	Global newY
@@ -179,7 +184,7 @@ InsertXML(id) {
 				;MsgBox %a%
 			}
 
-			x.addElement("user", "//users", {id: a}, {name: name}, {count: c}, data)
+			x.addElement("user", "//users", {id: a}, {name: name}, {count: c},data)
 			;MsgBox not found
 		}
 		x.writeXML("logger/tracker.xml")

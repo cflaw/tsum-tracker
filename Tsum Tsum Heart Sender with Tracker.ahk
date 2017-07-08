@@ -581,8 +581,6 @@ StartIndivClaim:
 					Sleep, 1000
 					break okay
 				}
-				else 
-				msgbox no find ok
 			}
 			
 			receive:

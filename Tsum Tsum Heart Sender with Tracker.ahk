@@ -229,21 +229,8 @@ ClaimAll:
 	;if ErrorLevel = 0
 	;	ControlClick, x%Px1% y%Py1%, Nox ahk_class Qt5QWindowIcon
 	
-	Loop	
-	{
-		GoSub, StartIndivClaim ; start the individual claim
-		
-		Sleep, 200
-		ControlClick, x336 y178, Nox ahk_class Qt5QWindowIcon ; Click mail button.
-		Sleep, 300
-		PixelSearch, Px1, Py1, 105, 275, 115, 280, 0x9540DE, 3, Fast ;Search for first pink heart in the Mail Box.
-			
-		if (ErrorLevel = 1) {
-			;msgbox no first heart
-			Break
-		}
 
-	}
+	GoSub, StartIndivClaim ; start the individual claim
 	
 	; Play Again button Error Code: -1
 	PixelSearch, Px1, Py1, 310, 435, 320, 445, 0x283B67, 3, Fast
@@ -282,8 +269,17 @@ ClaimAll:
 				Break
 			}
 		}
+		
+		ControlClick, x336 y178, Nox ahk_class Qt5QWindowIcon ; Click mail button.
+		Sleep, 300
+		PixelSearch, Px1, Py1, 105, 275, 115, 280, 0x9540DE, 3, Fast ;Search for first pink heart in the Mail Box.
+		
+
+		; no hearts in first item of the inbox
 		if Mail_Claimed > 0
-			Break
+			if (ErrorLevel = 1) {
+				Break
+			}
 	}
 				
 	; No messages notice in Mail Box
@@ -577,8 +573,16 @@ StartIndivClaim:
 			ControlClick, x310 y250, Nox ahk_class Qt5QWindowIcon ; Click check button.	
 			Sleep, 350
 			ControlClick, x270 y440, Nox ahk_class Qt5QWindowIcon 	; click ok
-			Sleep, 400
-			ControlClick, x270 y440, Nox ahk_class Qt5QWindowIcon 	;  click away
+			
+			Loop {
+				PixelSearch, Px1, Py1, 350, 420, 360, 430, 0x20C3E8, 3, Fast ;Search for received page
+				if (ErrorLevel = 1) {
+					ControlClick, x270 y440, Nox ahk_class Qt5QWindowIcon 	; click away
+				}
+				else {
+					Break
+				}
+			}
 		}
 	}
 Return ; StartIndivClaim

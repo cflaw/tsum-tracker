@@ -27,8 +27,10 @@ SetWorkingDir %A_ScriptDir%
  firstDelay := 1680000 ; 27mins
  secondDelay := 420000 ;7mins
  shortDelay = 20000 ;10 secs
- fullDelay := 3900000 ;65mins  
-   
+ fullDelay := 3900000 ;65mins 
+ debug := 0 ; set this to 1 if you want to see why you are stuck at mailbox
+ skypeName = name ; enter your skype's name here 
+ skypeSwitch := 0 ; set this to 1 if you want notifications via skype
 ;---------- MAIN LOGIC ------
  IfWinNotExist, Tsum Tsum.txt - Notepad
  {
@@ -51,14 +53,12 @@ IniSeq:
  ;GoSub, doClaim
  GoSub, CheckHearts
  GoSub, CalDelay
+ delay := 10
  if elapsed < fullDelay
  {
     delay := fullDelay - elapsed - 1000
   }
-  else
-  {
-	delay := 0
-  }
+
   Sleep, %delay%
 
 Return ; IniSeq
@@ -79,10 +79,13 @@ SetTime:
 Return ; Set Time
 
 SendMessage:
- WinActivate, chunfu law
- Send, %message%
- Sleep, 200
- Send, {Enter}
+	if skypeSwitch = 1
+	{
+		 WinActivate, %skypeName%
+		 Send, %message%
+		 Sleep, 200
+		 Send, {Enter}
+	 }
 Return ; SendMessage
 
 doClaim:
@@ -557,7 +560,8 @@ IndivClaim:
 		InsertXML(id)
     }
 	else {
-		;MsgBox not found claim indiv
+		if (debug = 1)
+			MsgBox Did not find first Check button
 	}
 	
 Return ; IndivClaim
@@ -570,7 +574,6 @@ StartIndivClaim:
 		PixelSearch, Px1, Py1, 105, 275, 115, 280, 0x9540DE, 3, Fast ;Search for first pink heart in the Mail Box.
 			
 		if (ErrorLevel = 1) {
-
 			Break StartIndivClaim
 		}
 		else {

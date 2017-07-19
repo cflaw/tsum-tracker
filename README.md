@@ -14,6 +14,19 @@ https://autohotkey.com/board/topic/89197-xml-build-parse-xml/
 - script is written for Nox player, resolution: 405 x 720 
 - script must be ran in AHK **ANSI 32-bit**
 
+version 0.3
+--------------
+1) Current version able to start the loop after 65minutes from start of claim.
+If elapsed time > 65minutes, loop will start immediately (actually 10ms after)
+Note: Found out that this sequence will result in hearts that no longer gives 200 gold. Need to change sequence to probably send 80 hearts, then do a claim individual.
+
+2) Added option to trigger on and off skype notifications
+
+3) Added debug level to find out why we are stuck at mailbox.
+Note: Usually due to the imagesearch of the Check button in the mailbox. If Msgbox shows, means that you probably need to do a recapture of your check button's image in the images folder.
+
+4) OCR added to identify name from NOX screen.
+
 version 0.2
 --------------
 import into git

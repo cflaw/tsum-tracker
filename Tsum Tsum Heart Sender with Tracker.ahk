@@ -75,6 +75,9 @@ Return ; CalDelay
 SetTime:
  FormatTime, currentTime,, hh:mm:ss 
  aTime := StrSplit(currentTime, ":")
+ if(aTime.1 = 12 && aTime.4 = "AM") {
+	aTime.1 := 0
+ }
  currSecs := (aTime.1 * 3600 + aTime.2 * 60 + aTime.3)*1000
 Return ; Set Time
 

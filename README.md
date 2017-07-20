@@ -11,6 +11,7 @@ https://autohotkey.com/board/topic/89197-xml-build-parse-xml/
 
 !!important
 --------------
+- Run Tsum Tsum Heart Sender with Tracker.ahk for main sender+tracker
 - script is written for Nox player, resolution: 405 x 720 
 - script must be ran in AHK **ANSI 32-bit**
 

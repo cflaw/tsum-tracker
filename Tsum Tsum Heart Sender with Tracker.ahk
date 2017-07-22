@@ -58,37 +58,46 @@ IniSeq:
  {
     delay := fullDelay - elapsed - 1000
   }
-
+  message := Time . " - Took: " . elapsed/60000 . "mins, Delay: " . delay/60000 . "mins"
+  GoSub, SendMessage
+  
   Sleep, %delay%
 
 Return ; IniSeq
 
 CalDelay:
   prevSecs := currSecs
-  FormatTime, currentTime,, hh:mm:ss 
-  aTime := StrSplit(currentTime, ":")
-  currSecs := (aTime.1 * 3600 + aTime.2 * 60 + aTime.3 )*1000
+  prevDay := currDay
+	
+  FormatTime, currentTime,, dd:HH:mm:ss:tt 
+  aTime := StrSplit(currentTime, ":")  
+  currDay := aTime.1
+  
+  if (currDay <> prevDay && aTime.2 = 00)
+  {
+	aTime.2 := 24
+  }
+   
+  currSecs := (aTime.2 * 3600 + aTime.3 * 60 + aTime.4 )*1000
   elapsed := currSecs - prevSecs
  
 Return ; CalDelay
 
 SetTime:
- FormatTime, currentTime,, hh:mm:ss 
+ FormatTime, currentTime,, dd:HH:mm:ss 
  aTime := StrSplit(currentTime, ":")
- if(aTime.1 = 12) {
-	aTime.1 := 0
- }
- currSecs := (aTime.1 * 3600 + aTime.2 * 60 + aTime.3)*1000
+ currDay := aTime.1
+ currSecs := (aTime.2 * 3600 + aTime.3 * 60 + aTime.4)*1000
 Return ; Set Time
 
 SendMessage:
 	if skypeSwitch = 1
 	{
-		 WinActivate, %skypeName%
-		 Send, %message%
-		 Sleep, 200
-		 Send, {Enter}
-	 }
+		WinActivate, %skypeName%
+		Send, %message%
+		Sleep, 200
+		Send, {Enter}
+	}
 Return ; SendMessage
 
 doClaim:
@@ -306,7 +315,7 @@ ClaimSub:
 				FormatTime, Time,, hh:mm:ss tt
 				ControlSend,, %Time% - Claiming All {Enter}^{s}, Tsum Tsum.txt - Notepad
 				message := Time . " - Claiming All"
-				GoSub, SendMessage
+				;GoSub, SendMessage
 				Break
 			}
 

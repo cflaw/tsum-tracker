@@ -54,10 +54,12 @@ IniSeq:
  GoSub, CheckHearts
  GoSub, CalDelay
  delay := 10
- if elapsed < fullDelay
+ if (elapsed < fullDelay && elapsed > 0 )
  {
     delay := fullDelay - elapsed - 1000
   }
+  
+  SetFormat,Float,3.2
   message := Time . " - Took: " . elapsed/60000 . "mins, Delay: " . delay/60000 . "mins"
   GoSub, SendMessage
   

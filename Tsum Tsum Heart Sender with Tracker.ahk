@@ -152,25 +152,32 @@ CheckHearts:
  ;GoSub, SendMessage
  GoSub, SendHearts
  
- FormatTime, Time,, hh:mm:ss tt
- ControlSend,, %Time% - %GiveHearts% Given {Enter}^{s}, Tsum Tsum.txt - Notepad
- message := Time . " - " . GiveHearts . " Given"
- ;GoSub, SendMessage
- 
- ;FormatTime, Time,, hh:mm:ss tt
- ;ControlSend,, %Time% - Claiming All {Enter}^{s}, Tsum Tsum.txt - Notepad
- ;message := Time . " - Claiming All"
- ;GoSub, SendMessage
- ;GoSub, ClaimAll
- 
- FormatTime, Time,, hh:mm:ss tt
- ControlSend,, %Time% - End Giving Hearts{Enter}^{s}, Tsum Tsum.txt - Notepad
- message := Time . " - End Giving " . GiveHearts . " Hearts"
- GoSub, SendMessage
- 
+ if disconnect < 1
+ {
+	 FormatTime, Time,, hh:mm:ss tt
+	 ControlSend,, %Time% - %GiveHearts% Given {Enter}^{s}, Tsum Tsum.txt - Notepad
+	 message := Time . " - " . GiveHearts . " Given"
+	 ;GoSub, SendMessage
+	 
+	 ;FormatTime, Time,, hh:mm:ss tt
+	 ;ControlSend,, %Time% - Claiming All {Enter}^{s}, Tsum Tsum.txt - Notepad
+	 ;message := Time . " - Claiming All"
+	 ;GoSub, SendMessage
+	 ;GoSub, ClaimAll
+	 
+	 FormatTime, Time,, hh:mm:ss tt
+	 ControlSend,, %Time% - End Giving Hearts{Enter}^{s}, Tsum Tsum.txt - Notepad
+	 message := Time . " - End Giving " . GiveHearts . " Hearts"
+	 GoSub, SendMessage
+  }
+ else 
+ {
+	; MsgBox disconnect 1!
+ }
 Return ;CheckHearts
 
 CheckConnection:
+	disconnect := 0
 	Tap_Count = 0
 	Loop
 	{
@@ -478,7 +485,9 @@ SendHearts:
 					ControlSend,, %Time% - Disconnected.  %GiveHearts% Given {Enter}^{s}, Tsum Tsum.txt - Notepad
 					message := Time . " - Disconnected. " . GiveHearts . " Given"
 					GoSub, SendMessage
-					ExitApp
+					; ExitApp
+					disconnect := 1
+					Return
 				}
 
 			} 
